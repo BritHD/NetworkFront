@@ -45,7 +45,7 @@ function NetworkGraph() {
       const tempnod = []
 
       csvData.forEach(row =>{
-        var sourceNode = nodes.find(node => {
+        var sourceNode = tempnod.find(node => {
             return node.Name === row.source;
         });
 
@@ -56,7 +56,7 @@ function NetworkGraph() {
         }
 
         // Check if target node already exists
-        var targetNode = nodes.find(node => {
+        var targetNode = tempnod.find(node => {
             return node.Name === row.target;
         });
 
@@ -76,6 +76,8 @@ function NetworkGraph() {
 
         templin.push({source: row.source, target: row.target, category: type, weight: row.weight})
       })
+
+      console.log(tempnod)
       setlinks(templin)
       setnodes(tempnod)
       setCsv(csvData)
@@ -218,6 +220,11 @@ function NetworkGraph() {
   useEffect(()=>{
     if (pos == null) return
 
+    console.log(nodes)
+    //console.log(links)
+
+    const bigW = Math.max(...links.map((link) => link.weight)) //largest weight
+
     //console.log('graphing')
     //console.log(pos)
     const color = d3.scaleOrdinal(d3.schemeCategory10);
@@ -228,7 +235,7 @@ function NetworkGraph() {
     .join(
       enter => enter.append("line")
         .style("stroke", d => getColors(d.category))
-        .style("stroke-width", d => d.weight/links[0].weight * 10)
+        .style("stroke-width", d => d.weight/bigW * 10)
         .attr("x1", d => pos[d.source].x)
         .attr("y1", d => pos[d.source].y)
         .attr("x2", d => pos[d.target].x)
